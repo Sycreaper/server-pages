@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sycreaper - Welcome</title>
+  <link rel="icon" href="./images/favicon.png" type="image/x-icon">
+  <style src="./stylesheets/style.css" type="text/css"></style>
+  <script src="./javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <style>
+    .box{
+      box-sizing: border-box;
+      margin: 30px auto;
+      height: 576px;
+      width: 1024px;
+      overflow: hidden;
+      position: relative;
+      border-radius: 7px;
+    }
+    a{
+      text-decoration: none;
+    }
+    .box ul,
+    .box li{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .box .box-img{
+      position: absolute;
+    }
+    .box .box-img>li{
+      float: left;
+    }
+    .box .box-img:after,
+    .box:after{
+      content: ' ';
+      display: block;
+      clear: both;
+    }
+    .box .box-img img{
+      width: 1024px;
+      height: 576px;
+      border-radius: 7px;
+    }
+    .box .Bt{
+      position: absolute;
+      top:50%;
+      margin-top: -20px;
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 50%;
+      border: 1px solid #ff5900;
+      color: #ff5900;
+      text-align: center;
+    }
+    .box .leftBt{
+      left: 10px;
+    }
+    .box .rightBt{
+      right: 10px;
+    }
+    .box .box-Bt{
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      font-size: 0;
+      text-align: center;
+    }
+    .box .box-Bt li{
+      display: inline-block;
+      height: 10px;
+      width: 40px;
+      border: 1px solid rgba(234, 94, 18, 0.7);
+      border-radius: 10px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+    .box .active{
+      background: rgba(234, 94, 18, 0.7);
+    }
+
+    .ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: black;
+      border-radius: 7px;
+    }
+
+    .li {
+      float: left;
+    }
+
+    .a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    .a:hover {
+      background-color: #333333;
+    }
+  </style>
+</head>
+<body style="background-color: black">
+<ul class="ul">
+  <li class="li"><a class="a" style="padding: 5px" href="./index.html"><img style="border-radius: 5px" src="./images/logo.png" alt="Sycreaper" height="36"></a></li>
+  <li class="li"><a class="a" href="./docs.html">DOCS</a></li>
+  <li class="li"><a class="a" href="./news.html">NEWS</a></li>
+  <li class="li"><a class="a" href="./download.html">DOWNLOAD</a></li>
+  <li class="li" style="float: right"><a class="a" href="./about.html">ABOUT</a></li>
+</ul>
+<div class="box">
+  <ul class="box-img">
+    <li><a href="#"><img src="./images/turn1.png" alt=""></a></li>
+    <li><a href="#"><img src="./images/turn2.png" alt=""></a></li>
+    <li><a href="#"><img src="./images/turn3.png" alt=""></a></li>
+    <li><a href="#"><img src="./images/turn4.png" alt=""></a></li>
+  </ul>
+  <a class="Bt leftBt" href="#"><<</a>
+  <a class="Bt rightBt" href="#">>></a>
+  <ul class="box-Bt">
+    <li class="active"></li>
+    <li></li>
+    <li></li>
+    <li></li>
+  </ul>
+</div>
+
+
+<!--suppress JSUnusedGlobalSymbols -->
+<script>
+  function $Box($box) {
+    this.init($box)
+    this.bind()
+    this.autoBegin()
+  }
+  $Box.prototype = {
+    init:function ($box) {
+      this.$box = $box
+      this.$boxImg  = this.$box.find('.box-img')
+      this.$boxLi   = this.$box.find('.box-img>li')
+      this.$leftBt  = this.$box.find('.leftBt')
+      this.$rightBt = this.$box.find('.rightBt')
+      this.$boxBtLi = this.$box.find('.box-Bt>li')
+
+      this.$boxImg.append(this.$boxLi.first().clone())
+      this.$boxImg.prepend(this.$boxLi.last().clone())
+      this.index = 0
+      this.imgWidth = this.$boxLi.width()
+      this.imgCount = this.$boxLi.length
+      this.$boxImg.width(( this.imgCount + 2) *  this.imgWidth )
+      // noinspection JSUnresolvedReference
+      this.$boxImg.css('left',-this.imgWidth)
+
+    },
+    bind:function () {
+      const _this = this;
+      this.$leftBt.on('click',function () {
+        _this.LeftBt(1)
+      })
+      this.$rightBt.on('click',function () {
+        _this.RightBt(1)
+      })
+
+      this.$boxBtLi.on('click',function () {
+        const index = $(this).index();
+        if(_this.index > index){
+          _this.LeftBt(_this.index - index)
+        }else {
+          _this.RightBt(index - _this.index)
+
+        }
+      })
+      this.$boxImg.on('mouseover',function () {
+        _this.autoStop()
+      })
+      this.$boxImg.on('mouseout',function () {
+        console.log('000')
+        _this.autoBegin()
+      })
+
+    },
+
+    LeftBt:function (len) {
+      const _this = this;
+      this.$boxImg.animate({
+        left: '+='+ this.imgWidth * len
+      },function () {
+        _this.index -= len
+        if(_this.index < 0){
+          _this.$boxImg.css('left',-_this.imgWidth * _this.imgCount)
+          _this.index = _this.imgCount - 1
+        }
+        _this.BoxBtLi()
+      })
+    },
+    RightBt:function (len) {
+      const _this = this;
+      this.$boxImg.animate({
+        left: '-='+ this.imgWidth * len
+      },function () {
+        _this.index += len
+        if(_this.index === _this.imgCount){
+          _this.$boxImg.css('left',-_this.imgWidth)
+          _this.index = 0
+        }
+        _this.BoxBtLi()
+      })
+    },
+    BoxBtLi:function () {
+      this.$boxBtLi.eq(this.index).addClass('active')
+              .siblings().removeClass('active')
+    },
+    autoBegin:function () {
+      const _this = this;
+      this.a = setInterval(function () {
+        _this.RightBt(1)
+      },3000)
+    },
+    autoStop:function () {
+      clearTimeout(this.a)
+    }
+
+  }
+
+  const a = new $Box($('.box').eq(0));
+  const b = new $Box($('.box').eq(1));
+
+
+</script>
+
+</body>
+</html>
